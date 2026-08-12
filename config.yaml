@@ -1,0 +1,47 @@
+# 默认分析参数。你可以直接改这里，不必每次在命令行写很长的参数。
+
+# 输入、输出和模型
+images: data/组1
+output: output/组1
+model: weights/best.pt
+
+# 实验参数
+fps: 30
+px_size_mm:
+
+# 识别参数
+target_class: 飞溅液滴
+conf: 0.10
+imgsz: 1280
+device:
+
+# 轨迹参数
+tracker: nearest
+tracker_config: bytetrack.yaml
+max_track_distance: 100
+
+# 断帧处理
+# max_track_gap: 允许同一个液滴中间漏检的最大帧数，例如 3 表示中间最多缺 3 张图仍尝试接回同一条轨迹
+# max_gap_link_distance: 跨断帧重连时，预测位置和新轨迹起点的最大允许距离，单位 pixel
+# interpolate_missing: true 时会在 result.csv/result.xlsx 中补出缺失帧的线性插值点，并用 interpolated=true 标记
+max_track_gap: 3
+max_gap_link_distance: 160
+interpolate_missing: true
+
+# 轨迹拟合
+# fit_tracks: true 时，对每条轨迹做低阶多项式拟合，输出拟合坐标和更平滑的拟合速度
+# track_fit_degree: 最大拟合阶数。2 表示优先二次轨迹；点数不足时自动降为一次或不拟合
+# use_fitted_for_speed: true 时，速度优先使用拟合坐标计算；false 时仍用原始/插值坐标计算
+fit_tracks: true
+track_fit_degree: 2
+use_fitted_for_speed: true
+
+# 质量控制
+min_track_real_points: 3
+
+# 输出管理
+# true: 每次运行自动在 output/组1 下创建 run1.0、run2.0 等版本子文件夹，避免覆盖旧结果
+# false: 直接写入 output 指定目录，旧结果会被覆盖
+auto_output_subdir: true
+output_version_mode: numeric
+output_version_step: 1.0
