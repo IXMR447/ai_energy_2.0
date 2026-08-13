@@ -11,7 +11,7 @@ px_size_mm:
 
 # 识别参数
 target_class: 飞溅液滴
-conf: 0.10
+conf: 0.2
 imgsz: 1280
 device:
 
@@ -19,6 +19,20 @@ device:
 tracker: nearest
 tracker_config: bytetrack.yaml
 max_track_distance: 100
+
+# 轨迹匹配（综合 位置 / 形状 / 颜色 判断同一颗粒）
+# max_size_ratio: 两帧颗粒面积比上限（>1，越小越严，防止把大小不同的颗粒连一起）
+# max_color_distance: 掩码平均颜色(BGR)距离上限（0-441，越小越严，颜色差异过大的候选直接排除）
+max_size_ratio: 3.0
+max_color_distance: 70.0
+
+# 同帧去重 / 光晕抑制
+# suppress_overlap: true 时，同一帧内重叠/紧邻的检测只保留置信度最高的（去掉重复掩码和亮颗粒的光晕）
+# suppress_iou: 掩码 IoU 超过该值 → 视为同一物体
+# suppress_center_ratio: 中心距离 < 该值 × 较大直径 → 视为光晕/重复（1.0 ≈ 一个直径内）
+suppress_overlap: true
+suppress_iou: 0.20
+suppress_center_ratio: 1.0
 
 # 断帧处理
 # max_track_gap: 允许同一个液滴中间漏检的最大帧数，例如 3 表示中间最多缺 3 张图仍尝试接回同一条轨迹
@@ -45,3 +59,12 @@ min_track_real_points: 3
 auto_output_subdir: true
 output_version_mode: numeric
 output_version_step: 1.0
+
+# 轨迹视频
+# true: 每个粒子生成一段短视频（tracks_videos/ 子目录），按时间顺序逐个展示其运动轨迹
+# false: 不生成轨迹视频，只保留 tracks.png 总览图
+save_track_videos: true
+# video_slowdown: 视频相对真实时间放慢的倍数。例如 5 表示视频帧率 = fps/5，每帧停留时间变为原来的 5 倍
+video_slowdown: 5
+# save_full_video: 额外把整组图片合成一个视频（全序列总览，叠加所有轨迹），同样用 video_slowdown 慢放
+save_full_video: true
